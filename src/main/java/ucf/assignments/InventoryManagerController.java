@@ -9,6 +9,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 
@@ -17,10 +18,16 @@ public class InventoryManagerController implements Initializable {
     private InventoryModel inventoryModel;
     private SceneManager sceneManager;
 
-    public InventoryManagerController(InventoryModel inventoryModel, SceneManager sceneManager) {
+    public InventoryManagerController(InventoryModel inventoryModel, SceneManager sceneManager,
+                                      EditInventoryManagerController editInventoryManagerController) {
         this.inventoryModel = inventoryModel;
         this.sceneManager = sceneManager;
+        this.editInventoryManagerController = editInventoryManagerController;
     }
+
+    private EditInventoryManagerController editInventoryManagerController;
+
+
 
     @FXML
     private MenuButton sortOptions;
@@ -61,11 +68,11 @@ public class InventoryManagerController implements Initializable {
     public void saveButtonClicked(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Inventory");
-        FileChooser.ExtensionFilter extFil1 = new FileChooser.ExtensionFilter("HTML File (*.html)",
+        FileChooser.ExtensionFilter html = new FileChooser.ExtensionFilter("HTML File (*.html)",
                 "*.html");
-        FileChooser.ExtensionFilter extFil2 = new FileChooser.ExtensionFilter("TSV File (*.txt)",
+        FileChooser.ExtensionFilter tsv = new FileChooser.ExtensionFilter("TSV File (*.txt)",
                 "*.txt");
-        fileChooser.getExtensionFilters().addAll(extFil1, extFil2);
+        fileChooser.getExtensionFilters().addAll(html, tsv);
         File file = fileChooser.showSaveDialog(new Stage());
 
         // Write to file in format depending on extension
@@ -78,6 +85,7 @@ public class InventoryManagerController implements Initializable {
 
     @FXML
     public void loadButtonClicked(ActionEvent actionEvent) {
+        // Call fileChooser to allow user to pick file they'd like to load
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load Inventory");
         File file = fileChooser.showOpenDialog(new Stage());
@@ -179,7 +187,7 @@ public class InventoryManagerController implements Initializable {
             return;
 
         // Add new item to inventory ObservableList
-        Item newItem = new Item(newItemName.getText(), newSerialNum.getText(), newItemPrice.getText());
+        Item newItem = new Item(newItemName.getText(), newSerialNum.getText().toUpperCase(), newItemPrice.getText());
         inventoryModel.addItemToInventory(newItem);
 
         // Clear text fields
@@ -189,6 +197,8 @@ public class InventoryManagerController implements Initializable {
     }
 
     private boolean addItemWarnings() {
+
+
         if (newItemName.getText().isEmpty() || newSerialNum.getText().isEmpty() || newItemPrice.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("WARNING");
@@ -229,30 +239,83 @@ public class InventoryManagerController implements Initializable {
             return false;
         }
 
+        for (int i = 0; i < inventoryModel.getInventory().size(); i++) {
+            Item curItem = inventoryModel.getInventory().get(i);
+            // Create alert about existing serial if item with entered serial already exists
+            if (newSerialNum.getText().toLowerCase().equals(curItem.getSerial().toLowerCase())) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("WARNING");
+                alert.setHeaderText("Serial Number Already Exists");
+                alert.setContentText("Please make sure the new serial number you've entered isn't identical to " +
+                        "that of another item already existing in the inventory.");
+                alert.showAndWait();
+                return false;
+            }
+        }
+
         return true;
     }
 
     @FXML
     public void editItemButtonClicked(ActionEvent actionEvent) {
+        if (inventoryTable.getSelectionModel().getSelectedItem() == null) {
+            // Generate alert if nothing has been selected before attempting to edit, then return early
+            noItemSelectedWarning();
+            return;
+        }
 
+        inventoryModel.setCurSelected(inventoryTable.getSelectionModel().getSelectedItem());
+        editInventoryManagerController.getEditedItemName().setText(inventoryModel.getCurSelected().getName());
+        editInventoryManagerController.getEditedSerialNum().setText(inventoryModel.getCurSelected().getSerial());
+        editInventoryManagerController.getEditedItemPrice().setText(inventoryModel.getCurSelected().getPrice());
+
+        // Create new window to allow for edits to be made
+        Stage stage = new Stage();
+        stage.setTitle("Edit Inventory Item");
+        stage.setScene(sceneManager.getScene("EditInventoryManager"));
+        stage.showAndWait();
+
+        // Edit item in ObservableList
+        inventoryModel.editItem(inventoryModel.getCurSelected());
+
+        // After stage has been closed, set curSelected and new property strings back to null
+        inventoryModel.setCurSelected(null);
+        inventoryModel.setNewPrice("");
+        inventoryModel.setNewSerial("");
+        inventoryModel.setNewPrice("");
+
+        // Refresh table to reflect changes
+        inventoryTable.refresh();
+    }
+
+    private void noItemSelectedWarning() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("WARNING");
+        alert.setHeaderText("No Item Selected");
+        alert.setContentText("Please select an item before attempting to edit/remove one.");
+        alert.showAndWait();
     }
 
     @FXML
     public void removeItemButtonClicked(ActionEvent actionEvent) {
         if (inventoryModel.getInventory().size() == 0) {
             // Create alert saying there is nothing that can be removed then return
+            noItemSelectedWarning();
             return;
         }
 
-        Item selectedItem = null;
         if (inventoryTable.getSelectionModel().getSelectedItem() == null) {
             // Create alert saying that an item should be selected before attempting to remove then return
+            noItemSelectedWarning();
             return;
         }
-        else
-            selectedItem = inventoryTable.getSelectionModel().getSelectedItem();
+        else {
+            inventoryModel.setCurSelected(inventoryTable.getSelectionModel().getSelectedItem());
+            inventoryModel.removeItemFromInventory(inventoryModel.getCurSelected());
+        }
 
-        inventoryModel.removeItemFromInventory(selectedItem);
+        // Set curSelected back to null
+        inventoryModel.setCurSelected(null);
     }
 
     @FXML

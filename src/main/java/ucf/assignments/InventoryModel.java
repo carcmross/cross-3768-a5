@@ -12,6 +12,42 @@ public class InventoryModel {
 
     private ObservableList<Item> inventory;
     private ObservableList<Item> foundInventory;
+    private Item curSelected;
+    private String newName;
+    private String newSerial;
+    private String newPrice;
+
+    public Item getCurSelected() {
+        return curSelected;
+    }
+
+    public void setCurSelected(Item curSelected) {
+        this.curSelected = curSelected;
+    }
+
+    public String getNewName() {
+        return newName;
+    }
+
+    public String getNewSerial() {
+        return newSerial;
+    }
+
+    public String getNewPrice() {
+        return newPrice;
+    }
+
+    public void setNewName(String newName) {
+        this.newName = newName;
+    }
+
+    public void setNewSerial(String newSerial) {
+        this.newSerial = newSerial;
+    }
+
+    public void setNewPrice(String newPrice) {
+        this.newPrice = newPrice;
+    }
 
     public InventoryModel() {
         inventory = FXCollections.observableArrayList();
@@ -21,6 +57,10 @@ public class InventoryModel {
     public InventoryModel(ObservableList<Item> itemInventory, ObservableList<Item> searchedInventory) {
         this.inventory = itemInventory;
         this.foundInventory = searchedInventory;
+
+        this.newName = "";
+        this.newPrice = "";
+        this.newSerial = "";
     }
 
     public ObservableList<Item> getInventory() {
@@ -56,6 +96,7 @@ public class InventoryModel {
     }
 
     public void writeToTSV(File file) {
+        // Get output from generate function and write to file given by filechooser
         String output = generateTSVOutput();
         try {
             FileWriter writer = new FileWriter(file);
@@ -79,31 +120,36 @@ public class InventoryModel {
         inventory.add(item);
     }
 
+    public void editItem(Item item) {
+        // Set item's properties to the properties obtained from the TextFields in the edit window
+        item.setName(newName);
+        item.setSerial(newSerial.toUpperCase());
+        item.setPrice(newPrice);
+    }
+
     public void removeItemFromInventory(Item selectedItem) {
         inventory.remove(selectedItem);
     }
 
     public void searchByName(String search) {
+        // Add item to foundInventory if it matches the search string
         for (int i = 0; i < inventory.size(); i++) {
             Item curItem = inventory.get(i);
-            System.out.println(curItem.getName());
             if (curItem.getName().toLowerCase().equals(search) ||
                     curItem.getName().toLowerCase().startsWith(search)) {
                 foundInventory.add(curItem);
             }
-            System.out.println(foundInventory.size());
         }
     }
 
     public void searchBySerial(String search) {
+        // Add item to foundInventory if it matches the search string
         for (int i = 0; i < inventory.size(); i++) {
             Item curItem = inventory.get(i);
-            System.out.println(curItem.getName());
             if (curItem.getSerial().toLowerCase().equals(search) ||
                     curItem.getSerial().toLowerCase().startsWith(search)) {
                 foundInventory.add(curItem);
             }
-            System.out.println(foundInventory.size());
         }
     }
 
@@ -116,6 +162,7 @@ public class InventoryModel {
                 Scanner in = new Scanner(file);
                 // Read first line so it's not inputted as an inventory item
                 in.nextLine();
+                // Split line into individual properties with tab and assign the new item to inventory
                 while (in.hasNextLine()) {
                     String[] properties = in.nextLine().split("\t");
                     inventory.add(new Item(properties[0], properties[1], properties[2]));

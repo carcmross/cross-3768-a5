@@ -38,17 +38,8 @@
           </Menu>
         </menus>
       </MenuBar>
-      <HBox layoutX="22.0" layoutY="88.0" prefHeight="32.0" prefWidth="1254.0" spacing="10.0">
+      <HBox layoutX="146.0" layoutY="83.0" prefHeight="32.0" prefWidth="1063.0" spacing="10.0">
          <children>
-            <MenuButton fx:id="sortOptions" mnemonicParsing="false" prefHeight="26.0" prefWidth="183.0" text="Sort By...">
-              <items>
-                <MenuItem mnemonicParsing="false" onAction="#sortAlphabetically" text="Item Name (A-Z)" />
-                  <MenuItem mnemonicParsing="false" onAction="#sortReverseAlphabetically" text="Item Name (Z-A)" />
-                  <MenuItem mnemonicParsing="false" onAction="#sortLowToHighCost" text="Item Price ($-$$$)" />
-                  <MenuItem mnemonicParsing="false" onAction="#sortHighToLowCost" text="Item Price ($$$-$)" />
-                <MenuItem mnemonicParsing="false" onAction="#sortBySerial" text="Serial Number" />
-              </items>
-            </MenuButton>
             <TextField fx:id="searchBar" prefHeight="26.0" prefWidth="954.0" promptText="Search inventory..." />
             <MenuButton mnemonicParsing="false" text="Search by...">
               <items>

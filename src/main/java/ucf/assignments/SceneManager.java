@@ -13,10 +13,12 @@ public class SceneManager {
     public void load() {
         InventoryModel inventoryModel = new InventoryModel();
 
-        InventoryManagerController inventoryManagerController = new InventoryManagerController(inventoryModel,
-                this);
         SearchManagerController searchManagerController = new SearchManagerController(inventoryModel,
                 this);
+        EditInventoryManagerController editInventoryManagerController = new
+                EditInventoryManagerController(inventoryModel, this);
+        InventoryManagerController inventoryManagerController = new InventoryManagerController(inventoryModel,
+                this, editInventoryManagerController);
 
         Parent root;
 
@@ -36,6 +38,16 @@ public class SceneManager {
         try {
             root = searchLoader.load();
             scenes.put("SearchManager", new Scene(root));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        FXMLLoader editLoader = new FXMLLoader(getClass().getResource("EditInventoryManager.fxml"));
+        editLoader.setController(editInventoryManagerController);
+
+        try {
+            root = editLoader.load();
+            scenes.put("EditInventoryManager", new Scene(root));
         } catch (IOException e) {
             e.printStackTrace();
         }
