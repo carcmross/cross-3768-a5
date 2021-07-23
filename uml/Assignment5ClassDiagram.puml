@@ -1,0 +1,99 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class InventoryManager {
+start()
+main()
+}
+
+class InventoryManagerController {
+- inventoryModel: InventoryModel
+- sceneManager: SceneManager
+- sortOptions: MenuButton
+- newItemName: TextField
+- newSerialNum: TextField
+- newItemPrice: TextField
+- searchBar: TextField
+- inventoryTable: TableView<Item>
+- nameColumn: TableColumn<Item, String>
+- serialColumn: TableColumn<Item, String>
+- priceColumn: TableColumn<Item, String>
++ initialize(URL, ResourceBundle)
++ saveButtonClicked(ActionEvent)
++ loadButtonClicked(ActionEvent)
++ searchBySerialClicked(ActionEvent)
++ searchByNameClicked(ActionEvent)
++ addItemButtonClicked(ActionEvent)
++ editItemButtonClicked(ActionEvent)
++ removeItemButtonClicked(ActionEvent)
++ sortAlphabetically(ActionEvent)
++ sortReverseAlphabetically(ActionEvent)
++ sortBySerial(ActionEvent)
++ sortLowToHighCost(ActionEvent)
++ sortHighToLowCost(ActionEvent)
+- addItemWarnings(): boolean
+- noItemsFound()
+- emptySearchWarning()
+}
+
+class InventoryModel {
+- inventory: ObservableList<Item>
+- foundInventory: ObservableList<Item>
+
++ getInventory(): ObservableList<Item>
++ getFoundInventory(): ObservableList<Item>
++ generateHTMLOutput(): String
++ writeToHTML(File)
++ generateTSVOutput(): String
++ writeToTSV(File)
++ addItemToInventory(Item)
++ removeItemFromInventory(Item)
++ searchByName(String)
++ searchBySerial(String)
++ loadInventoryFromFile
++ loadHTML(File): ObservableList<Item>
++ loadTSV(File): ObservableList<Item>
+}
+
+class Item {
+- name: String
+- serial: String
+- price: String
+
++ getName(): String
++ setName(String)
++ getSerial(): String
++ setSerial(String)
++ getPrice(): String
++ setPrice(String)
+}
+
+class SceneManager {
+- scenes: Map<String, Scene>
+
++ load()
++ getScene(String): Scene
+}
+
+class SearchManagerController {
+- inventoryModel: InventoryModel
+- sceneManager: SceneManager
+
+- searchedItemView: TableView<Item>
+- searchedName: TableColumn<Item, String>
+- searchedSerial: TableColumn<Item, String>
+- searchedPrice: TableColumn<Item, String>
++ initialize(URL, ResourceBundle)
+}
+
+openjfx.org.Application <|-- InventoryManager
+InventoryManager -- SceneManager
+SceneManager -- InventoryManagerController
+SceneManager -- SearchManagerController
+SceneManager -- EditInventoryManagerController
+InventoryManagerController -- InventoryModel
+SearchManagerController -- InventoryModel
+EditInventoryManagerController -- InventoryModel
+InventoryModel *-- Item
+
+@enduml

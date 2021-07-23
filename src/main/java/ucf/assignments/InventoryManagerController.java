@@ -1,0 +1,288 @@
+package ucf.assignments;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import java.io.File;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+
+public class InventoryManagerController implements Initializable {
+
+    private InventoryModel inventoryModel;
+    private SceneManager sceneManager;
+
+    public InventoryManagerController(InventoryModel inventoryModel, SceneManager sceneManager) {
+        this.inventoryModel = inventoryModel;
+        this.sceneManager = sceneManager;
+    }
+
+    @FXML
+    private MenuButton sortOptions;
+
+    @FXML
+    private TextField newItemName;
+
+    @FXML
+    private TextField newSerialNum;
+
+    @FXML
+    private TextField newItemPrice;
+
+    @FXML
+    private TextField searchBar;
+
+    @FXML
+    private TableView<Item> inventoryTable;
+
+    @FXML
+    private TableColumn<Item, String> nameColumn;
+
+    @FXML
+    private TableColumn<Item, String> serialColumn;
+
+    @FXML
+    private TableColumn<Item, String> priceColumn;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        nameColumn.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
+        serialColumn.setCellValueFactory(new PropertyValueFactory<Item, String>("serial"));
+        priceColumn.setCellValueFactory(new PropertyValueFactory<Item, String>("price"));
+        inventoryTable.setItems(inventoryModel.getInventory());
+    }
+
+    @FXML
+    public void saveButtonClicked(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Inventory");
+        FileChooser.ExtensionFilter extFil1 = new FileChooser.ExtensionFilter("HTML File (*.html)",
+                "*.html");
+        FileChooser.ExtensionFilter extFil2 = new FileChooser.ExtensionFilter("TSV File (*.txt)",
+                "*.txt");
+        fileChooser.getExtensionFilters().addAll(extFil1, extFil2);
+        File file = fileChooser.showSaveDialog(new Stage());
+
+        // Write to file in format depending on extension
+        if (file.getName().endsWith("txt")) {
+            inventoryModel.writeToTSV(file);
+        } else if (file.getName().endsWith("html")) {
+            inventoryModel.writeToHTML(file);
+        }
+    }
+
+    @FXML
+    public void loadButtonClicked(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Load Inventory");
+        File file = fileChooser.showOpenDialog(new Stage());
+        if (file != null)
+            inventoryModel.loadInventoryFromFile(file);
+    }
+
+    @FXML
+    public void searchBySerialClicked(ActionEvent actionEvent) {
+        // Clear found inventory list if there are items in it already
+        if (inventoryModel.getFoundInventory().size() != 0)
+            inventoryModel.getFoundInventory().clear();
+
+
+        // Check if searchBar is empty before assigning string to search variable
+        String search = "";
+        if (searchBar.getText() != null)
+            search = searchBar.getText();
+        else {
+            // Generate alert prompting user to type in search bar before clicking search button
+            emptySearchWarning();
+            return;
+        }
+
+        // Call searchBySerial to add items to foundInventory list if they match the search
+        inventoryModel.searchBySerial(search);
+
+        if (inventoryModel.getFoundInventory().size() == 0)
+            noItemsFound();
+        else {
+            // Create new window
+            Stage stage = new Stage();
+            stage.setTitle("Inventory Lookup");
+            stage.setScene(sceneManager.getScene("SearchManager"));
+            // Display window
+            stage.showAndWait();
+        }
+
+        // Clear search string after items have been added to the foundinventory list
+        search = "";
+    }
+
+    @FXML
+    public void searchByNameClicked(ActionEvent actionEvent) {
+        // Clear found inventory list if there are items in it already
+        if (inventoryModel.getFoundInventory().size() != 0)
+            inventoryModel.getFoundInventory().clear();
+
+        // Set search string so that it can be passed to searchByName function
+        String search = "";
+        if (searchBar.getText() != "") {
+            search = searchBar.getText();
+        }
+        else {
+            emptySearchWarning();
+            return;
+        }
+
+        // Call searchBySerial to add items to foundInventory list if they match the search
+        inventoryModel.searchByName(search);
+
+        if (inventoryModel.getFoundInventory().size() == 0)
+            noItemsFound();
+        else {
+            // Create new window
+            Stage stage = new Stage();
+            stage.setTitle("Inventory Lookup");
+            stage.setScene(sceneManager.getScene("SearchManager"));
+            // Display window
+            stage.showAndWait();
+        }
+
+        // Clear search string after window is closed
+        search = "";
+    }
+
+    private void emptySearchWarning() {
+        // Generate alert if there is nothing typed in search bar
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("WARNING");
+        alert.setHeaderText("Search Bar is Empty");
+        alert.setContentText("Please make sure that you've typed in the search bar before attempting to" +
+                " search for items.");
+        alert.show();
+    }
+
+    private void noItemsFound() {
+        // Create alert if no matches were found for the search
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("WARNING");
+            alert.setHeaderText("No Matching Items Found");
+            alert.setContentText("No items matching your search criteria could be found. Please try again.");
+            alert.showAndWait();
+    }
+
+    @FXML
+    public void addItemButtonClicked(ActionEvent actionEvent) {
+        if (!addItemWarnings())
+            return;
+
+        // Add new item to inventory ObservableList
+        Item newItem = new Item(newItemName.getText(), newSerialNum.getText(), newItemPrice.getText());
+        inventoryModel.addItemToInventory(newItem);
+
+        // Clear text fields
+        newItemName.clear();
+        newSerialNum.clear();
+        newItemPrice.clear();
+    }
+
+    private boolean addItemWarnings() {
+        if (newItemName.getText().isEmpty() || newSerialNum.getText().isEmpty() || newItemPrice.getText().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("WARNING");
+            alert.setHeaderText("Blank Text Fields");
+            alert.setContentText("Please make sure that no text fields are left empty.");
+            alert.show();
+            return false;
+        }
+
+        // Create alert if name in the newItemName TextField is greater than 256 characters or less than 2
+        if (newItemName.getText().length() > 256 || newItemName.getText().length() == 1) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("WARNING");
+            alert.setHeaderText("Incorrect Name Length");
+            alert.setContentText("Please make sure that the inputted item name is between 2 and 256 characters.");
+            alert.show();
+            return false;
+        }
+
+        // Create alert if serial number is in wrong format
+        if (!newSerialNum.getText().matches("[a-zA-Z0-9]{10}")) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("WARNING");
+            alert.setHeaderText("Serial Number Format Incorrect");
+            alert.setContentText("Please make sure that the inputted serial number is in the format XXXXXXXXXX," +
+                    " where X can be either a number or letter.");
+            alert.show();
+            return false;
+        }
+
+        if (!newItemPrice.getText().matches("[0-9]+\\.[0-9]{2}")) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("WARNING");
+            alert.setHeaderText("Item Price Format Incorrect");
+            alert.setContentText("Please make sure your price is a decimal with two decimal places for cents" +
+                    " and only contains digits(no dollar sign necessary).");
+            alert.show();
+            return false;
+        }
+
+        return true;
+    }
+
+    @FXML
+    public void editItemButtonClicked(ActionEvent actionEvent) {
+
+    }
+
+    @FXML
+    public void removeItemButtonClicked(ActionEvent actionEvent) {
+        if (inventoryModel.getInventory().size() == 0) {
+            // Create alert saying there is nothing that can be removed then return
+            return;
+        }
+
+        Item selectedItem = null;
+        if (inventoryTable.getSelectionModel().getSelectedItem() == null) {
+            // Create alert saying that an item should be selected before attempting to remove then return
+            return;
+        }
+        else
+            selectedItem = inventoryTable.getSelectionModel().getSelectedItem();
+
+        inventoryModel.removeItemFromInventory(selectedItem);
+    }
+
+    @FXML
+    public void sortAlphabetically(ActionEvent actionEvent) {
+        // Set menu to display selected sort option
+        sortOptions.setText("Sort by Item Name (A-Z)");
+        // Change table view to reflect the newly selected sort criteria
+    }
+
+    public void sortReverseAlphabetically(ActionEvent actionEvent) {
+        // Set menu to display selected sort option
+        sortOptions.setText("Sort by Item Name (Z-A)");
+        // Change table view to reflect the newly selected sort criteria
+    }
+
+    public void sortBySerial(ActionEvent actionEvent) {
+        // Set menu to display selected sort option
+        sortOptions.setText("Sort by Serial Number");
+        // Change table view to reflect the newly selected sort criteria
+    }
+
+    public void sortLowToHighCost(ActionEvent actionEvent) {
+        // Set menu to display selected sort option
+        sortOptions.setText("Sort by Item Price ($-$$$)");
+        // Change table view to reflect the newly selected sort criteria
+    }
+
+    public void sortHighToLowCost(ActionEvent actionEvent) {
+        // Set menu to display selected sort option
+        sortOptions.setText("Sort by Item Price ($$$-$)");
+        // Change table view to reflect the newly selected sort criteria
+    }
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TableView fx:id="searchedItemView" layoutX="14.0" layoutY="12.0" prefHeight="377.0" prefWidth="821.0">
+        <columns>
+          <TableColumn fx:id="searchedName" prefWidth="624.3333435058594" text="Item Name" />
+          <TableColumn fx:id="searchedSerial" minWidth="0.0" prefWidth="104.66665649414062" text="Serial No." />
+            <TableColumn fx:id="searchedPrice" prefWidth="91.33331298828125" text="Price (USD)" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>
