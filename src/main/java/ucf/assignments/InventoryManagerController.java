@@ -94,10 +94,9 @@ public class InventoryManagerController implements Initializable {
         if (inventoryModel.getFoundInventory().size() != 0)
             inventoryModel.getFoundInventory().clear();
 
-
         // Check if searchBar is empty before assigning string to search variable
         String search = "";
-        if (searchBar.getText() != null)
+        if (searchBar.getText() != "")
             search = searchBar.getText();
         else {
             // Generate alert prompting user to type in search bar before clicking search button
@@ -192,7 +191,6 @@ public class InventoryManagerController implements Initializable {
     }
 
     private boolean addItemWarnings() {
-
         if (newItemName.getText().isEmpty() || newSerialNum.getText().isEmpty() || newItemPrice.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("WARNING");

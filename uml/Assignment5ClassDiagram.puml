@@ -18,6 +18,7 @@ class InventoryManagerController {
 - nameColumn: TableColumn<Item, String>
 - serialColumn: TableColumn<Item, String>
 - priceColumn: TableColumn<Item, String>
+
 + initialize(URL, ResourceBundle)
 + saveButtonClicked(ActionEvent)
 + loadButtonClicked(ActionEvent)
@@ -26,20 +27,24 @@ class InventoryManagerController {
 + addItemButtonClicked(ActionEvent)
 + editItemButtonClicked(ActionEvent)
 + removeItemButtonClicked(ActionEvent)
-+ sortAlphabetically(ActionEvent)
-+ sortReverseAlphabetically(ActionEvent)
-+ sortBySerial(ActionEvent)
-+ sortLowToHighCost(ActionEvent)
-+ sortHighToLowCost(ActionEvent)
 - addItemWarnings(): boolean
 - noItemsFound()
 - emptySearchWarning()
+- noItemSelectedWarning()
 }
 
 class InventoryModel {
 - inventory: ObservableList<Item>
 - foundInventory: ObservableList<Item>
 
++ getCurSelected(): Item
++ setCurSelected(Item)
++ getNewName(): String
++ setNewName(String)
++ getNewSerial(): String
++ setNewSerial(String)
++ getNewPrice(): String
++ setNewPrice(String)
 + getInventory(): ObservableList<Item>
 + getFoundInventory(): ObservableList<Item>
 + generateHTMLOutput(): String
@@ -50,9 +55,9 @@ class InventoryModel {
 + removeItemFromInventory(Item)
 + searchByName(String)
 + searchBySerial(String)
-+ loadInventoryFromFile
-+ loadHTML(File): ObservableList<Item>
-+ loadTSV(File): ObservableList<Item>
++ loadInventoryFromFile()
++ loadHTML(File)
++ loadTSV(File)
 }
 
 class Item {
@@ -84,6 +89,20 @@ class SearchManagerController {
 - searchedSerial: TableColumn<Item, String>
 - searchedPrice: TableColumn<Item, String>
 + initialize(URL, ResourceBundle)
+}
+
+class EditInventoryManagerController {
+- inventoryModel: InventoryModel
+- sceneManager: SceneManager
+- editedItemName: TextField
+- editedSerialNum: TextField
+- editedItemPrice: TextField
++ getEditedItemName: TextField
++ getEditedSerialNum: TextField
++ getEditedItemPrice: TextField
++ confirmButtonClicked(ActionEvent)
++ existingSerialWarning()
++ editItemWarnings(): boolean
 }
 
 openjfx.org.Application <|-- InventoryManager

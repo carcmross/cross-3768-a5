@@ -177,7 +177,7 @@ public class InventoryModel {
         }
     }
 
-        public void addItemToInventory(Item item) {
+    public void addItemToInventory(Item item) {
         // Add passed in item to the ObservableList
         inventory.add(item);
     }
