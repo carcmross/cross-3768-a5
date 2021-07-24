@@ -133,14 +133,14 @@ public class InventoryModel {
 
             // Split line into individual properties with tab and assign the new item to inventory
             while (in.hasNextLine()) {
-                // Read out <tr>
-                in.nextLine();
+                // Read out <tr>, return if tag is </table> (marking bottom of html file)
+                String tag = in.nextLine();
+                if (tag.equals("</table>"))
+                    return;
 
                 // Grab input from html file and get rid of the tags so only the properties are obtained
                 String readName = in.nextLine();
                 // Return from function if bottom tags have been reached
-                if (readName.equals("</table>"))
-                    return;
                 readName = readName.replace("\t\t<td>", "");
                 readName = readName.replace("</td>", "");
 
