@@ -1,5 +1,6 @@
 package ucf.assignments;
 
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,7 +10,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
 import java.net.URL;
-import java.util.Locale;
+import java.util.Comparator;
 import java.util.ResourceBundle;
 
 
@@ -17,20 +18,7 @@ public class InventoryManagerController implements Initializable {
 
     private InventoryModel inventoryModel;
     private SceneManager sceneManager;
-
-    public InventoryManagerController(InventoryModel inventoryModel, SceneManager sceneManager,
-                                      EditInventoryManagerController editInventoryManagerController) {
-        this.inventoryModel = inventoryModel;
-        this.sceneManager = sceneManager;
-        this.editInventoryManagerController = editInventoryManagerController;
-    }
-
     private EditInventoryManagerController editInventoryManagerController;
-
-
-
-    @FXML
-    private MenuButton sortOptions;
 
     @FXML
     private TextField newItemName;
@@ -55,6 +43,13 @@ public class InventoryManagerController implements Initializable {
 
     @FXML
     private TableColumn<Item, String> priceColumn;
+
+    public InventoryManagerController(InventoryModel inventoryModel, SceneManager sceneManager,
+                                      EditInventoryManagerController editInventoryManagerController) {
+        this.inventoryModel = inventoryModel;
+        this.sceneManager = sceneManager;
+        this.editInventoryManagerController = editInventoryManagerController;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -198,7 +193,6 @@ public class InventoryManagerController implements Initializable {
 
     private boolean addItemWarnings() {
 
-
         if (newItemName.getText().isEmpty() || newSerialNum.getText().isEmpty() || newItemPrice.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("WARNING");
@@ -316,36 +310,5 @@ public class InventoryManagerController implements Initializable {
 
         // Set curSelected back to null
         inventoryModel.setCurSelected(null);
-    }
-
-    @FXML
-    public void sortAlphabetically(ActionEvent actionEvent) {
-        // Set menu to display selected sort option
-        sortOptions.setText("Sort by Item Name (A-Z)");
-        // Change table view to reflect the newly selected sort criteria
-    }
-
-    public void sortReverseAlphabetically(ActionEvent actionEvent) {
-        // Set menu to display selected sort option
-        sortOptions.setText("Sort by Item Name (Z-A)");
-        // Change table view to reflect the newly selected sort criteria
-    }
-
-    public void sortBySerial(ActionEvent actionEvent) {
-        // Set menu to display selected sort option
-        sortOptions.setText("Sort by Serial Number");
-        // Change table view to reflect the newly selected sort criteria
-    }
-
-    public void sortLowToHighCost(ActionEvent actionEvent) {
-        // Set menu to display selected sort option
-        sortOptions.setText("Sort by Item Price ($-$$$)");
-        // Change table view to reflect the newly selected sort criteria
-    }
-
-    public void sortHighToLowCost(ActionEvent actionEvent) {
-        // Set menu to display selected sort option
-        sortOptions.setText("Sort by Item Price ($$$-$)");
-        // Change table view to reflect the newly selected sort criteria
     }
 }

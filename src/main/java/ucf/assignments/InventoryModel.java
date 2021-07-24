@@ -72,13 +72,30 @@ public class InventoryModel {
     }
 
     public String generateHTMLOutput() {
-        return "";
+        String output = "<!doctype html>\n<html>\n<head>\n\t<title>Inventory Checker</title>\n</head>\n";
+        output += "<body>\n<table>\n\t<tr>\n\t\t<th>Item Name</th>\n\t\t<th>Serial No.</th>\n\t\t<th>Item Price</th>" +
+                "\n\t</tr>\n";
+
+        for (int i = 0; i < inventory.size(); i++) {
+            output += "\t<tr>\n";
+            output += "\t\t<td>" + inventory.get(i).getName() + "</td>\n";
+            output += "\t\t<td>" + inventory.get(i).getSerial() + "</td>\n";
+            output += "\t\t<td>" + inventory.get(i).getPrice() + "</td>\n";
+            output += "\t</tr>\n";
+        }
+
+        output += "</table>\n</body>\n</html>";
+
+        return output;
     }
 
     public void writeToHTML(File file) {
         String output = generateHTMLOutput();
         try {
             FileWriter writer = new FileWriter(file);
+            writer.write(output);
+            writer.close();
+            System.out.println(output);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -107,15 +124,26 @@ public class InventoryModel {
         }
     }
 
-    public ObservableList loadHTML(File file) {
-        return FXCollections.observableArrayList();
+    public void loadHTML(File file) {
+
     }
 
-    public ObservableList loadTSV(File file) {
-        return FXCollections.observableArrayList();
+    public void loadTSV(File file) {
+        try {
+            Scanner in = new Scanner(file);
+            // Read first line so it's not inputted as an inventory item
+            in.nextLine();
+            // Split line into individual properties with tab and assign the new item to inventory
+            while (in.hasNextLine()) {
+                String[] properties = in.nextLine().split("\t");
+                inventory.add(new Item(properties[0], properties[1], properties[2]));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void addItemToInventory(Item item) {
+        public void addItemToInventory(Item item) {
         // Add passed in item to the ObservableList
         inventory.add(item);
     }
@@ -158,19 +186,8 @@ public class InventoryModel {
             inventory.clear();
 
         if (file.getName().endsWith("txt")) {
-            try {
-                Scanner in = new Scanner(file);
-                // Read first line so it's not inputted as an inventory item
-                in.nextLine();
-                // Split line into individual properties with tab and assign the new item to inventory
-                while (in.hasNextLine()) {
-                    String[] properties = in.nextLine().split("\t");
-                    inventory.add(new Item(properties[0], properties[1], properties[2]));
-                }
-                return;
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+            loadTSV(file);
+            return;
         } else if (file.getName().endsWith("html")) {
 
         }
