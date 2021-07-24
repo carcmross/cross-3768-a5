@@ -125,7 +125,41 @@ public class InventoryModel {
     }
 
     public void loadHTML(File file) {
+        try {
+            Scanner in = new Scanner(file);
+            // Read first 10 so it's not inputted as an inventory item
+            for (int i = 0; i < 12; i++)
+                in.nextLine();
 
+            // Split line into individual properties with tab and assign the new item to inventory
+            while (in.hasNextLine()) {
+                // Read out <tr>
+                in.nextLine();
+
+                // Grab input from html file and get rid of the tags so only the properties are obtained
+                String readName = in.nextLine();
+                // Return from function if bottom tags have been reached
+                if (readName.equals("</table>"))
+                    return;
+                readName = readName.replace("\t\t<td>", "");
+                readName = readName.replace("</td>", "");
+
+                String readSerial = in.nextLine();
+                readSerial = readSerial.replace("\t\t<td>", "");
+                readSerial = readSerial.replace("</td>", "");
+
+                String readPrice = in.nextLine();
+                readPrice = readPrice.replace("\t\t<td>", "");
+                readPrice = readPrice.replace("</td>", "");
+
+                inventory.add(new Item(readName, readSerial, readPrice));
+
+                // Read out </tr>
+                in.nextLine();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void loadTSV(File file) {
@@ -189,7 +223,8 @@ public class InventoryModel {
             loadTSV(file);
             return;
         } else if (file.getName().endsWith("html")) {
-
+            loadHTML(file);
+            return;
         }
     }
 }
