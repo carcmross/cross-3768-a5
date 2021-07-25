@@ -19,6 +19,20 @@ import static org.junit.jupiter.api.Assertions.*;
 class InventoryModelTest {
 
     @Test
+    void user_can_store_at_least_100_inventory_items() {
+        InventoryModel inventoryModel = new InventoryModel();
+        for (int i = 0; i < 101; i++) {
+            String value = String.format("$%d.00", i);
+            String serialNum = String.format("%10d", i);
+            String name = "Item "  + i;
+            inventoryModel.getInventory().add(new Item(name, serialNum, value));
+        }
+        int actual = inventoryModel.getInventory().size();
+        int expected = 101;
+        assertEquals(expected, actual);
+    }
+
+    @Test
     void getInventory_returns_inventory_ObservableList() {
         InventoryModel inventoryModel = new InventoryModel();
         inventoryModel.getInventory().addAll(new Item("Item 1", "0000000000", "$5.00"),
