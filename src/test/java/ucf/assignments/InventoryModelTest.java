@@ -9,8 +9,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.file.Paths;
+import java.util.Scanner;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 class InventoryModelTest {
 
@@ -43,31 +47,108 @@ class InventoryModelTest {
     @Test
     void generateHTMLOutput_returns_html_output_in_proper_format() {
         InventoryModel inventoryModel = new InventoryModel();
+        inventoryModel.getInventory().addAll(new Item("Item 1", "0000000000", "$5.00"),
+                new Item("Item 2", "1111111111", "$10.00"));
+        String actual = inventoryModel.generateHTMLOutput();
+
+        String expected = "<!doctype html>\n<html>\n<head>\n\t<title>Inventory Checker</title>\n</head>\n";
+        expected += "<body>\n<table>\n\t<tr>\n\t\t<th>Value</th>\n\t\t<th>Serial Number</th>\n\t\t<th>Name</th>" +
+                "\n\t</tr>\n";
+        expected += "\t<tr>\n\t\t<td>$5.00</td>\n\t\t<td>0000000000</td>\n\t\t<td>Item 1</td>\n\t</tr>\n";
+        expected += "\t<tr>\n\t\t<td>$10.00</td>\n\t\t<td>1111111111</td>\n\t\t<td>Item 2</td>\n\t</tr>\n";
+        expected += "</table>\n</body>\n</html>";
+        assertEquals(expected, actual);
     }
 
     @Test
     void writeToHTML_writes_given_output_to_html_file() {
         InventoryModel inventoryModel = new InventoryModel();
+        inventoryModel.getInventory().addAll(new Item("Item 1", "0000000000", "$5.00"),
+                new Item("Item 2", "1111111111", "$10.00"));
+
+        String expected = "<!doctype html>\n<html>\n<head>\n\t<title>Inventory Checker</title>\n</head>\n";
+        expected += "<body>\n<table>\n\t<tr>\n\t\t<th>Value</th>\n\t\t<th>Serial Number</th>\n\t\t<th>Name</th>" +
+                "\n\t</tr>\n";
+        expected += "\t<tr>\n\t\t<td>$5.00</td>\n\t\t<td>0000000000</td>\n\t\t<td>Item 1</td>\n\t</tr>\n";
+        expected += "\t<tr>\n\t\t<td>$10.00</td>\n\t\t<td>1111111111</td>\n\t\t<td>Item 2</td>\n\t</tr>\n";
+        expected += "</table>\n</body>\n</html>";
+
+        File writeFile = new File("src/test/resources/HTMLWriteFile.html");
+        inventoryModel.writeToHTML(writeFile);
+
+        String actual = "";
+        try {
+            Scanner in = new Scanner(writeFile);
+            while (in.hasNextLine()) {
+                actual += in.nextLine();
+                if (in.hasNextLine())
+                    actual += "\n";
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        assertEquals(expected, actual);
     }
 
     @Test
     void generateTSVOutput_returns_tsv_output_in_proper_format() {
         InventoryModel inventoryModel = new InventoryModel();
+        inventoryModel.getInventory().addAll(new Item("Item 1", "0000000000", "$5.00"),
+                new Item("Item 2", "1111111111", "$10.00"));
+        String actual = inventoryModel.generateTSVOutput();
+
+        String expected = "Value\tSerial Number\tName\n";
+        expected += "Item 1\t0000000000\t$5.00\nItem 2\t1111111111\t$10.00\n";
+
+        assertEquals(expected, actual);
     }
 
     @Test
     void writeToTSV_writes_given_output_to_tsv_file() {
         InventoryModel inventoryModel = new InventoryModel();
+        inventoryModel.getInventory().addAll(new Item("Item 1", "0000000000", "$5.00"),
+                new Item("Item 2", "1111111111", "$10.00"));
+
+        String expected = "Value\tSerial Number\tName\n";
+        expected += "Item 1\t0000000000\t$5.00\nItem 2\t1111111111\t$10.00";
+
+        File writeFile = new File("src/test/resources/TSVWriteFile.txt");
+        inventoryModel.writeToTSV(writeFile);
+
+        String actual = "";
+        try {
+            Scanner in = new Scanner(writeFile);
+            while (in.hasNextLine()) {
+                actual += in.nextLine();
+                if (in.hasNextLine())
+                    actual += "\n";
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        assertEquals(expected, actual);
     }
 
     @Test
     void loadHTML_returns_ObservableList_after_reading_html_file() {
         InventoryModel inventoryModel = new InventoryModel();
+        inventoryModel.loadHTML(new File("src/test/resources/HTMLLoadFile.html"));
+        ObservableList<Item> actual = inventoryModel.getInventory();
+        ObservableList<Item> expected = FXCollections.observableArrayList();
+        expected.add(new Item("Footlong", "0123456789", "$5.00"));
+        assertEquals(expected.toString(), actual.toString());
     }
 
     @Test
     void loadTSV_returns_ObservableList_after_reading_tsv_file() {
         InventoryModel inventoryModel = new InventoryModel();
+        inventoryModel.loadTSV(new File("src/test/resources/TSVLoadFile.txt"));
+        ObservableList<Item> actual = inventoryModel.getInventory();
+        ObservableList<Item> expected = FXCollections.observableArrayList();
+        expected.add(new Item("Playstation 5 Digital", "1234567890", "$399.99"));
+        assertEquals(expected.toString(), actual.toString());
     }
 
     @Test
