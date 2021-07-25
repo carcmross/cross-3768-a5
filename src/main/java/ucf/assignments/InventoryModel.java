@@ -1,5 +1,10 @@
 package ucf.assignments;
 
+/*
+ *  UCF COP3330 Summer 2021 Assignment 5 Solution
+ *  Copyright 2021 Marc-Anthony Cross
+ */
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.io.File;
@@ -52,6 +57,10 @@ public class InventoryModel {
     public InventoryModel() {
         inventory = FXCollections.observableArrayList();
         foundInventory = FXCollections.observableArrayList();
+
+        newName = "";
+        newSerial = "";
+        newPrice = "";
     }
 
     public InventoryModel(ObservableList<Item> itemInventory, ObservableList<Item> searchedInventory) {
@@ -73,14 +82,14 @@ public class InventoryModel {
 
     public String generateHTMLOutput() {
         String output = "<!doctype html>\n<html>\n<head>\n\t<title>Inventory Checker</title>\n</head>\n";
-        output += "<body>\n<table>\n\t<tr>\n\t\t<th>Item Name</th>\n\t\t<th>Serial No.</th>\n\t\t<th>Item Price</th>" +
+        output += "<body>\n<table>\n\t<tr>\n\t\t<th>Value</th>\n\t\t<th>Serial Number</th>\n\t\t<th>Name</th>" +
                 "\n\t</tr>\n";
 
         for (int i = 0; i < inventory.size(); i++) {
             output += "\t<tr>\n";
-            output += "\t\t<td>" + inventory.get(i).getName() + "</td>\n";
-            output += "\t\t<td>" + inventory.get(i).getSerial() + "</td>\n";
             output += "\t\t<td>" + inventory.get(i).getPrice() + "</td>\n";
+            output += "\t\t<td>" + inventory.get(i).getSerial() + "</td>\n";
+            output += "\t\t<td>" + inventory.get(i).getName() + "</td>\n";
             output += "\t</tr>\n";
         }
 
@@ -102,11 +111,11 @@ public class InventoryModel {
     }
 
     public String generateTSVOutput() {
-        String output = "Item Name\tSerial Number\tItem Price\n";
+        String output = "Value\tSerial Number\tName\n";
         for (int i = 0; i < inventory.size(); i++) {
-            String curName = inventory.get(i).getName();
-            String curSerial = inventory.get(i).getSerial();
             String curPrice = inventory.get(i).getPrice();
+            String curSerial = inventory.get(i).getSerial();
+            String curName = inventory.get(i).getName();
             output += curName + "\t" + curSerial + "\t" + curPrice + "\n";
         }
         return output;
@@ -139,18 +148,17 @@ public class InventoryModel {
                     return;
 
                 // Grab input from html file and get rid of the tags so only the properties are obtained
-                String readName = in.nextLine();
-                // Return from function if bottom tags have been reached
-                readName = readName.replace("\t\t<td>", "");
-                readName = readName.replace("</td>", "");
+                String readPrice = in.nextLine();
+                readPrice = readPrice.replace("\t\t<td>", "");
+                readPrice = readPrice.replace("</td>", "");
 
                 String readSerial = in.nextLine();
                 readSerial = readSerial.replace("\t\t<td>", "");
                 readSerial = readSerial.replace("</td>", "");
 
-                String readPrice = in.nextLine();
-                readPrice = readPrice.replace("\t\t<td>", "");
-                readPrice = readPrice.replace("</td>", "");
+                String readName = in.nextLine();
+                readName = readName.replace("\t\t<td>", "");
+                readName = readName.replace("</td>", "");
 
                 inventory.add(new Item(readName, readSerial, readPrice));
 
@@ -197,8 +205,9 @@ public class InventoryModel {
         // Add item to foundInventory if it matches the search string
         for (int i = 0; i < inventory.size(); i++) {
             Item curItem = inventory.get(i);
-            if (curItem.getName().toLowerCase().equals(search) ||
-                    curItem.getName().toLowerCase().startsWith(search)) {
+            System.out.println(search);
+            System.out.println(curItem.getName());
+            if (curItem.getName().toLowerCase().contains(search)) {
                 foundInventory.add(curItem);
             }
         }
@@ -208,8 +217,7 @@ public class InventoryModel {
         // Add item to foundInventory if it matches the search string
         for (int i = 0; i < inventory.size(); i++) {
             Item curItem = inventory.get(i);
-            if (curItem.getSerial().toLowerCase().equals(search) ||
-                    curItem.getSerial().toLowerCase().startsWith(search)) {
+            if (curItem.getSerial().toLowerCase().contains(search)){
                 foundInventory.add(curItem);
             }
         }

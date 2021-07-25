@@ -1,6 +1,10 @@
 package ucf.assignments;
 
-import javafx.collections.FXCollections;
+/*
+ *  UCF COP3330 Summer 2021 Assignment 5 Solution
+ *  Copyright 2021 Marc-Anthony Cross
+ */
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,7 +14,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
 import java.net.URL;
-import java.util.Comparator;
 import java.util.ResourceBundle;
 
 
@@ -221,12 +224,12 @@ public class InventoryManagerController implements Initializable {
             return false;
         }
 
-        if (!newItemPrice.getText().matches("[0-9]+\\.[0-9]{2}")) {
+        if (!newItemPrice.getText().matches("[$]{1}[0-9]+\\.[0-9]{2}")) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("WARNING");
             alert.setHeaderText("Item Price Format Incorrect");
-            alert.setContentText("Please make sure your price is a decimal with two decimal places for cents" +
-                    " and only contains digits(no dollar sign necessary).");
+            alert.setContentText("Please make sure your price begins with a dollar sign and contains two" +
+                    " digits after the decimal(i.e. $1.99).");
             alert.show();
             return false;
         }

@@ -16,9 +16,9 @@
    <children>
       <TableView fx:id="inventoryTable" layoutX="21.0" layoutY="122.0" prefHeight="564.0" prefWidth="1256.0">
         <columns>
-          <TableColumn fx:id="nameColumn" prefWidth="984.0" text="Item Name" />
-          <TableColumn fx:id="serialColumn" minWidth="0.0" prefWidth="168.0" text="Serial No." />
-            <TableColumn fx:id="priceColumn" minWidth="6.0" prefWidth="102.0" text="Price (USD)" />
+            <TableColumn fx:id="priceColumn" minWidth="6.0" prefWidth="143.0" text="Value (USD)" />
+          <TableColumn fx:id="serialColumn" minWidth="0.0" prefWidth="137.0" text="Serial Number" />
+          <TableColumn fx:id="nameColumn" prefWidth="974.0" text="Name" />
         </columns>
       </TableView>
       <ButtonBar layoutX="965.0" layoutY="36.0" prefHeight="40.0" prefWidth="310.0">
