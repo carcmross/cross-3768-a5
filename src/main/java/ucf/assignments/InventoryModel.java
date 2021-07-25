@@ -104,7 +104,6 @@ public class InventoryModel {
             FileWriter writer = new FileWriter(file);
             writer.write(output);
             writer.close();
-            System.out.println(output);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -205,8 +204,6 @@ public class InventoryModel {
         // Add item to foundInventory if it matches the search string
         for (int i = 0; i < inventory.size(); i++) {
             Item curItem = inventory.get(i);
-            System.out.println(search);
-            System.out.println(curItem.getName());
             if (curItem.getName().toLowerCase().contains(search)) {
                 foundInventory.add(curItem);
             }
