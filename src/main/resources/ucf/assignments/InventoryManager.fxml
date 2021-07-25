@@ -14,11 +14,11 @@
 
 <AnchorPane prefHeight="700.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TableView fx:id="inventoryTable" layoutX="21.0" layoutY="122.0" prefHeight="564.0" prefWidth="1256.0">
+      <TableView fx:id="inventoryTable" focusTraversable="false" layoutX="21.0" layoutY="122.0" prefHeight="564.0" prefWidth="1256.0">
         <columns>
-            <TableColumn fx:id="priceColumn" minWidth="6.0" prefWidth="143.0" text="Value (USD)" />
-          <TableColumn fx:id="serialColumn" minWidth="0.0" prefWidth="137.0" text="Serial Number" />
-          <TableColumn fx:id="nameColumn" prefWidth="974.0" text="Name" />
+            <TableColumn fx:id="priceColumn" editable="false" minWidth="6.0" prefWidth="143.0" resizable="false" text="Value (USD)" />
+          <TableColumn fx:id="serialColumn" editable="false" minWidth="0.0" prefWidth="137.0" resizable="false" text="Serial Number" />
+          <TableColumn fx:id="nameColumn" editable="false" prefWidth="974.0" resizable="false" text="Name" />
         </columns>
       </TableView>
       <ButtonBar layoutX="965.0" layoutY="36.0" prefHeight="40.0" prefWidth="310.0">

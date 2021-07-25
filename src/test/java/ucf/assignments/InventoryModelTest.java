@@ -23,8 +23,9 @@ class InventoryModelTest {
         InventoryModel inventoryModel = new InventoryModel();
         for (int i = 0; i < 101; i++) {
             String value = String.format("$%d.00", i);
-            String serialNum = String.format("%10d", i);
+            String serialNum = String.format("%d", i + 1000000000);
             String name = "Item "  + i;
+            System.out.println(value);
             inventoryModel.getInventory().add(new Item(name, serialNum, value));
         }
         int actual = inventoryModel.getInventory().size();

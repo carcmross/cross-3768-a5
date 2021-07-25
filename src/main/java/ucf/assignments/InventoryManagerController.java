@@ -74,10 +74,12 @@ public class InventoryManagerController implements Initializable {
         File file = fileChooser.showSaveDialog(new Stage());
 
         // Write to file in format depending on extension
-        if (file.getName().endsWith("txt")) {
-            inventoryModel.writeToTSV(file);
-        } else if (file.getName().endsWith("html")) {
-            inventoryModel.writeToHTML(file);
+        if (file != null) {
+            if (file.getName().endsWith("txt")) {
+                inventoryModel.writeToTSV(file);
+            } else if (file.getName().endsWith("html")) {
+                inventoryModel.writeToHTML(file);
+            }
         }
     }
 
