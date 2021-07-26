@@ -60,6 +60,9 @@ public class InventoryManagerController implements Initializable {
         serialColumn.setCellValueFactory(new PropertyValueFactory<Item, String>("serial"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<Item, String>("price"));
         inventoryTable.setItems(inventoryModel.getInventory());
+        nameColumn.setReorderable(false);
+        serialColumn.setReorderable(false);
+        priceColumn.setReorderable(false);
     }
 
     @FXML

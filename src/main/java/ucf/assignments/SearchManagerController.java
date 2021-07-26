@@ -41,5 +41,8 @@ public class SearchManagerController implements Initializable {
         searchedSerial.setCellValueFactory(new PropertyValueFactory<Item, String>("serial"));
         searchedPrice.setCellValueFactory(new PropertyValueFactory<Item, String>("price"));
         searchedItemView.setItems(inventoryModel.getFoundInventory());
+        searchedName.setReorderable(false);
+        searchedSerial.setReorderable(false);
+        searchedPrice.setReorderable(false);
     }
 }
